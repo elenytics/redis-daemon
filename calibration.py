@@ -4,10 +4,14 @@ import sys, time
 
 import json
 
+import datetime
+
 r = redis.StrictRedis(host='localhost', password="elenytics", port=6379, db=0)
 
 def my_handler(message):
 	with open('calibration.out', 'a') as file:
+                print message
+                print datetime.datetime.time(datetime.datetime.now())
 		#json.dump(message['data'], file, indent=2)
 		data = message['data'].split(';')
 		file.write('%s' % ', '.join(map(str, data)))
