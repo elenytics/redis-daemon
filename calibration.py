@@ -16,7 +16,7 @@ def my_handler(message):
 		data = message['data'].split(';')
                 battery_level = data[-1]
                 del data[-1]
-		file.write('%s' % ', '.join(map(str, data)))
+		file.write('%s' % ','.join(map(str, data)))
 		file.write('\n')
 
 
