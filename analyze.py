@@ -27,10 +27,15 @@ for pair in pairs:
     else:
         aps[pair[0]].append(pair[1])
 
+data = open('data.out', 'a')
 for ap in aps:
-    print ap
-    print ', '.join(map(str, aps[ap]))
+    data.write(ap)
+    data.write('\n')
+    data.write(', '.join(map(str, aps[ap])))
+    data.write('\n\n')
+    
+
+data.close()
 
 for rssi in aps.itervalues():
     arr = numpy.array(rssi).astype(numpy.float)
-    print numpy.std(arr)

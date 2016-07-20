@@ -1,12 +1,14 @@
 import redis
-
 import sys, time
-
 import json
-
 import datetime
+import tinys3
 
 r = redis.StrictRedis(host='localhost', password="elenytics", port=6379, db=0)
+with open('secret_keys.txt') as keys:
+   lines = keys.read().splitlines() 
+    conn = tinys3.Connection(lines[0],lines[1],default_bucket='elenytics-1')
+    keys.close()
 
 def my_handler(message):
 	with open('inputs.out', 'a') as file:
@@ -25,7 +27,7 @@ p.psubscribe(**{'*': my_handler})
 
 def get_messages(x, y, floor):
     outputs = open('outputs.out', 'a')
-    outputs.write("{}, {}, {}".format(x,y,floor))
+    outputs.write("{}".format(x))
     outputs.write('\n')
     outputs.close()
 
@@ -40,40 +42,16 @@ def get_messages(x, y, floor):
     except KeyboardInterrupt:
        return True 
 
+
 try: 
     while True:
         x = input("Enter x: ")
-        y = input("Enter y: ")
-        floor = input("Enter floor: ")
-        get_messages(x, y, floor)
-except KeyboardInterrupt:
-    with open('inputs.out', 'r') as inputs:
-        lines = [line.rstrip('\n') for line in open('inputs.out')]
+        get_messages(x)
+    except KeyboardInterrupt:
+        inputs = open('inputs.out', 'rb')
+        outputs = open('outputs.out', 'rb')
+        conn.upload('inputs.out', inputs)
+        conn.upload('outputs.out', outputs)
+        inputs.close()
+        outputs.close()
 
-    data = []
-    for line in lines:
-        data.append(line.split('  '))
-
-    pairs = []
-    for line in data:
-        for pair in line:
-            pairs.append(pair.split(','))
-
-    for pair in pairs:
-        if len(pair) > 2:
-            del pair[-1]
-
-    pairs = [pair for pair in pairs if pair != ['']]
-
-    aps = {}
-
-    for pair in pairs:
-        if pair[0] not in aps:
-            aps[pair[0]] = [pair[1]]
-        else:
-            aps[pair[0]].append(pair[1])
-
-    data = open('data.out', 'a')
-    for ap in aps:
-        open.write(ap)
-        open.write(', '.join(map(str, aps[ap]))
