@@ -17,6 +17,7 @@ for pair in pairs:
     if len(pair) > 2:
         del pair[-1]
 
+# sexy line of code right here
 pairs = [pair for pair in pairs if pair != ['']]
 
 aps = {}
@@ -39,3 +40,4 @@ data.close()
 
 for rssi in aps.itervalues():
     arr = numpy.array(rssi).astype(numpy.float)
+    print numpy.std(arr)

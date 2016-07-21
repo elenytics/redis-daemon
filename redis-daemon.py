@@ -9,7 +9,7 @@ r = redis.StrictRedis(host='localhost', password='elenytics', port=6379, db=0)
 
 
 def my_handler(message):
-        with open('output.out', 'a') as file:
+        with open('data.out', 'a') as file:
                 #json.dump(message['data'], file, indent=2)
                 data = message['data'].split(';')
                 file.write('%s' % ', '.join(map(str, data)))

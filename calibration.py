@@ -6,8 +6,8 @@ import tinys3
 
 r = redis.StrictRedis(host='localhost', password="elenytics", port=6379, db=0)
 with open('secret_keys.txt') as keys:
-   lines = keys.read().splitlines() 
-    conn = tinys3.Connection(lines[0],lines[1],default_bucket='elenytics-1')
+    lines = keys.read().splitlines() 
+    conn = tinys3.Connection(lines[0],lines[1],endpoint='s3-us-west-1.amazonaws.com')
     keys.close()
 
 def my_handler(message):
@@ -25,14 +25,14 @@ def my_handler(message):
 p = r.pubsub(ignore_subscribe_messages=True)
 p.psubscribe(**{'*': my_handler})
 
-def get_messages(x, y, floor):
+def get_messages(x):
     outputs = open('outputs.out', 'a')
     outputs.write("{}".format(x))
     outputs.write('\n')
     outputs.close()
 
     inputs = open('inputs.out', 'a')
-    inputs.write('\n')
+    inputs.write('#\n')
     inputs.close()
 
     try:
@@ -47,11 +47,11 @@ try:
     while True:
         x = input("Enter x: ")
         get_messages(x)
-    except KeyboardInterrupt:
-        inputs = open('inputs.out', 'rb')
-        outputs = open('outputs.out', 'rb')
-        conn.upload('inputs.out', inputs)
-        conn.upload('outputs.out', outputs)
-        inputs.close()
-        outputs.close()
+except KeyboardInterrupt:
+    inputs = open('inputs.out', 'rb')
+    outputs = open('outputs.out', 'rb')
+    conn.upload('inputs.out', inputs, bucket='elenytics-1')
+    conn.upload('outputs.out', outputs, bucket='elenytics-1')
+    inputs.close()
+    outputs.close()
 
