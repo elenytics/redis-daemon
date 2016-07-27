@@ -5,7 +5,7 @@ import datetime
 import tinys3
 
 r = redis.StrictRedis(host='localhost', password="elenytics", port=6379, db=0)
-ith open('secret_keys.txt') as keys:
+with open('secret_keys.txt') as keys:
     lines = keys.read().splitlines() 
     conn = tinys3.Connection(lines[0],lines[1],endpoint='s3-us-west-1.amazonaws.com')
     keys.close()
@@ -25,9 +25,6 @@ def my_handler(message):
 p = r.pubsub(ignore_subscribe_messages=True)
 p.psubscribe(**{'*': my_handler})
 
-c = r.pubsub(ignore_subscribe_messages=True)
-c.psubscribe(**{'calibrate': main_handler})
-
 def get_messages(x):
     outputs = open('outputs.out', 'a')
     outputs.write("{}".format(x))
@@ -41,6 +38,7 @@ def get_messages(x):
     try:
         while True:
             p.get_message()
+            time.sleep(0.005)
     except KeyboardInterrupt:
        return True 
 
