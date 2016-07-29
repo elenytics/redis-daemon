@@ -21,11 +21,14 @@ def my_handler(message):
 		file.write('%s' % ','.join(map(str, data)))
 		file.write('\n')
 
-
+"""
 p = r.pubsub(ignore_subscribe_messages=True)
 p.psubscribe(**{'*': my_handler})
+"""
 
 def get_messages(x, y, floor):
+    p = r.pubsub(ignore_subscribe_messages=True)
+    p.psubscribe(**{'*': my_handler})
     outputs = open('outputs.out', 'a')
     outputs.write("{}, {}, {}".format(x, y, floor))
     outputs.write('\n')
@@ -40,7 +43,8 @@ def get_messages(x, y, floor):
             p.get_message()
             time.sleep(0.005)
     except KeyboardInterrupt:
-       return True 
+        p.punsubscribe('*')
+        return True 
 
 
 try: 
