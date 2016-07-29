@@ -1,7 +1,7 @@
-import redis
-import sys, time
-import json
-import datetime
+import redis 
+import sys, time 
+import json 
+import datetime 
 import tinys3
 
 r = redis.StrictRedis(host='localhost', password="elenytics", port=6379, db=0)
@@ -25,9 +25,9 @@ def my_handler(message):
 p = r.pubsub(ignore_subscribe_messages=True)
 p.psubscribe(**{'*': my_handler})
 
-def get_messages(x):
+def get_messages(x, y, floor):
     outputs = open('outputs.out', 'a')
-    outputs.write("{}".format(x))
+    outputs.write("{}, {}, {}".format(x, y, floor))
     outputs.write('\n')
     outputs.close()
 
@@ -46,7 +46,9 @@ def get_messages(x):
 try: 
     while True:
         x = input("Enter x: ")
-        get_messages(x)
+        y = input("Enter y: ")
+        floor = input("Enter floor: ")
+        get_messages(x, y, floor)
 except KeyboardInterrupt:
     inputs = open('inputs.out', 'rb')
     outputs = open('outputs.out', 'rb')
